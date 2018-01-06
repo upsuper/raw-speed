@@ -1,0 +1,11 @@
+[package]
+name = "raw-speed"
+version = "0.1.0"
+authors = ["Xidorn Quan <me@upsuper.org>"]
+
+[dependencies]
+bitflags = "1.0"
+clap = "2.29"
+console = "0.5"
+crossbeam = "0.3"
+humansize = "1.1"
