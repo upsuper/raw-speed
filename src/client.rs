@@ -31,10 +31,7 @@ impl Sample {
 
 /// Given the start time and the samples, computes the average bytes
 /// per second.
-fn compute_average<'a, I: 'a>(since: Instant, samples: I) -> usize
-where
-    I: Iterator<Item = &'a Sample>,
-{
+fn compute_average<'a>(since: Instant, samples: impl Iterator<Item = &'a Sample>) -> usize {
     let (bytes, last_time) = samples.fold((0, since), |(b, _), s| (b + s.bytes, s.time));
     if last_time == since {
         return 0;
