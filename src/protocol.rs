@@ -27,9 +27,13 @@ impl FromStr for Mode {
     }
 }
 
-macro_rules! buf_size { () => (1024 * 1024) }
+macro_rules! buf_size {
+    () => {
+        1024 * 1024
+    };
+}
 macro_rules! impl_send {
-    ($socket:ident: $n:ident => $handler:block) => {
+    ($socket:ident : $n:ident => $handler:block) => {
         let buf = [0u8; buf_size!()];
         loop {
             match $socket.write(&buf) {
@@ -37,13 +41,13 @@ macro_rules! impl_send {
                 Ok($n) => $handler,
                 Err(e) => if e.kind() != ErrorKind::Interrupted {
                     panic!("Failed to send data: {:?}", e);
-                }
+                },
             }
         }
-    }
+    };
 }
 macro_rules! impl_recv {
-    ($socket:ident: $n:ident => $handler:block) => {
+    ($socket:ident : $n:ident => $handler:block) => {
         let mut buf = [0u8; buf_size!()];
         loop {
             match $socket.read(&mut buf) {
@@ -51,8 +55,8 @@ macro_rules! impl_recv {
                 Ok($n) => $handler,
                 Err(e) => if e.kind() != ErrorKind::Interrupted {
                     panic!("Failed to receive data: {:?}", e);
-                }
+                },
             }
         }
-    }
+    };
 }

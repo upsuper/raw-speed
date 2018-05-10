@@ -40,15 +40,20 @@ fn main() {
 
     if let Some(server) = matches.subcommand_matches("server") {
         let addr = server.value_of("address").unwrap_or(DEFAULT_ADDR);
-        let port = server.value_of("port")
+        let port = server
+            .value_of("port")
             .map(|p| p.parse().expect("Invalid port number"))
             .unwrap_or(DEFAULT_PORT);
         server::run(addr, port);
     } else if let Some(client) = matches.subcommand_matches("client") {
-        let mode = client.value_of("mode").unwrap()
-            .parse().expect("Invalid mode");
+        let mode = client
+            .value_of("mode")
+            .unwrap()
+            .parse()
+            .expect("Invalid mode");
         let addr = client.value_of("server").unwrap();
-        let port = client.value_of("port")
+        let port = client
+            .value_of("port")
             .map(|p| p.parse().expect("Invalid port number"))
             .unwrap_or(DEFAULT_PORT);
         client::run(addr, port, mode);

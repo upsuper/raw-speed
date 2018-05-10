@@ -32,18 +32,15 @@ impl Sample {
 /// Given the start time and the samples, computes the average bytes
 /// per second.
 fn compute_average<'a, I: 'a>(since: Instant, samples: I) -> usize
-where I: Iterator<Item=&'a Sample>
+where
+    I: Iterator<Item = &'a Sample>,
 {
-    let (bytes, last_time) = samples.fold(
-        (0, since),
-        |(b, _), s| (b + s.bytes, s.time)
-    );
+    let (bytes, last_time) = samples.fold((0, since), |(b, _), s| (b + s.bytes, s.time));
     if last_time == since {
         return 0;
     }
     let duration = last_time - since;
-    let seconds = duration.as_secs() as f32 +
-        (duration.subsec_nanos() as f32 * 1e-9f32);
+    let seconds = duration.as_secs() as f32 + (duration.subsec_nanos() as f32 * 1e-9f32);
     (bytes as f32 / seconds).round() as usize
 }
 
@@ -62,12 +59,10 @@ fn pop_samples_before(samples: &mut VecDeque<Sample>, until: Instant) {
 pub fn run(addr: &str, port: u16, mode: Mode) {
     assert!(!mode.is_empty());
 
-    let mut conn = TcpStream::connect((addr, port))
-        .expect("Failed to connect to server");
+    let mut conn = TcpStream::connect((addr, port)).expect("Failed to connect to server");
     conn.write_all(protocol::MAGIC_NUMBER)
         .expect("Failed to send magic number");
-    conn.write_all(&[mode.bits()])
-        .expect("Failed to send mode");
+    conn.write_all(&[mode.bits()]).expect("Failed to send mode");
 
     conn.flush().expect("Failed to flush data");
     let start_time = Instant::now();
@@ -80,7 +75,9 @@ pub fn run(addr: &str, port: u16, mode: Mode) {
         let mut conn = Some(conn);
         if mode.contains(Mode::UP) {
             let conn = if mode.contains(Mode::DOWN) {
-                conn.as_ref().unwrap().try_clone()
+                conn.as_ref()
+                    .unwrap()
+                    .try_clone()
                     .expect("Failed to clone conection for upstream")
             } else {
                 conn.take().unwrap()
@@ -93,10 +90,16 @@ pub fn run(addr: &str, port: u16, mode: Mode) {
         }
 
         let sample_interval = Duration::new(1, 0);
-        let mut up_sample = Sample { time: start_time, bytes: 0 };
+        let mut up_sample = Sample {
+            time: start_time,
+            bytes: 0,
+        };
         let mut up_samples_5s = VecDeque::with_capacity(6);
         let mut up_samples_1m = VecDeque::with_capacity(61);
-        let mut down_sample = Sample { time: start_time, bytes: 0 };
+        let mut down_sample = Sample {
+            time: start_time,
+            bytes: 0,
+        };
         let mut down_samples_5s = VecDeque::with_capacity(6);
         let mut down_samples_1m = VecDeque::with_capacity(61);
         up_samples_5s.push_back(up_sample);
@@ -111,7 +114,7 @@ pub fn run(addr: &str, port: u16, mode: Mode) {
             fn compute_avg(
                 samples: &mut VecDeque<Sample>,
                 new: &Sample,
-                duration: Duration
+                duration: Duration,
             ) -> usize {
                 samples.push_back(*new);
                 pop_samples_before(samples, new.time - duration);
@@ -125,10 +128,8 @@ pub fn run(addr: &str, port: u16, mode: Mode) {
                 samples_1m: &mut VecDeque<Sample>,
             ) {
                 let avg_1s = compute_average(sample.time, iter::once(new_sample));
-                let avg_5s = compute_avg(samples_5s, new_sample,
-                                        Duration::new(5, 0));
-                let avg_1m = compute_avg(samples_1m, new_sample,
-                                        Duration::new(60, 0));
+                let avg_5s = compute_avg(samples_5s, new_sample, Duration::new(5, 0));
+                let avg_1m = compute_avg(samples_1m, new_sample, Duration::new(60, 0));
                 *sample = *new_sample;
                 println!(
                     "{}: 1s avg: {}/s, 5s avg: {}/s, 1min avg: {}/s",
@@ -141,13 +142,23 @@ pub fn run(addr: &str, port: u16, mode: Mode) {
 
             let mut _lines = 0;
             if mode.contains(Mode::UP) {
-                print_avgs("Up", &mut up_sample, &new_up_sample,
-                           &mut up_samples_5s, &mut up_samples_1m);
+                print_avgs(
+                    "Up",
+                    &mut up_sample,
+                    &new_up_sample,
+                    &mut up_samples_5s,
+                    &mut up_samples_1m,
+                );
                 _lines += 1;
             }
             if mode.contains(Mode::DOWN) {
-                print_avgs("Down", &mut down_sample, &new_down_sample,
-                           &mut down_samples_5s, &mut down_samples_1m);
+                print_avgs(
+                    "Down",
+                    &mut down_sample,
+                    &new_down_sample,
+                    &mut down_samples_5s,
+                    &mut down_samples_1m,
+                );
                 _lines += 1;
             }
 
