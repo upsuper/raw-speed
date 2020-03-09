@@ -1,3 +1,9 @@
+use crate::protocol::{self, Mode};
+#[cfg(not(target_env = "musl"))]
+use console::Term;
+use crossbeam;
+use humansize::file_size_opts::BINARY;
+use humansize::FileSize;
 use std::collections::VecDeque;
 use std::io::{ErrorKind, Read, Write};
 use std::iter;
@@ -5,14 +11,6 @@ use std::net::TcpStream;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::thread;
 use std::time::{Duration, Instant};
-
-#[cfg(not(target_env = "musl"))]
-use console::Term;
-use crossbeam;
-use humansize::file_size_opts::BINARY;
-use humansize::FileSize;
-
-use crate::protocol::{self, Mode};
 
 #[derive(Clone, Copy)]
 struct Sample {
