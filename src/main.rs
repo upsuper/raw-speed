@@ -1,10 +1,8 @@
 use crate::protocol::Mode;
 use structopt::StructOpt;
 
-#[macro_use]
-mod protocol;
-
 mod client;
+mod protocol;
 mod server;
 mod utils;
 

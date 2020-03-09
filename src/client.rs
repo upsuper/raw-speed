@@ -1,11 +1,11 @@
-use crate::protocol::{self, Mode};
+use crate::protocol::{self, receive_indefinitely, send_indefinitely, Mode};
 #[cfg(not(target_env = "musl"))]
 use console::Term;
 use crossbeam;
 use humansize::file_size_opts::BINARY;
 use humansize::FileSize;
 use std::collections::VecDeque;
-use std::io::{ErrorKind, Read, Write};
+use std::io::Write;
 use std::iter;
 use std::net::TcpStream;
 use std::sync::atomic::{AtomicUsize, Ordering};
@@ -165,10 +165,14 @@ pub fn run(addr: &str, port: u16, mode: Mode) {
     .expect("thread panicked");
 }
 
-fn handle_upstream(mut socket: TcpStream, counter: &AtomicUsize) {
-    impl_send!(socket: n => { counter.fetch_add(n, Ordering::Relaxed); });
+fn handle_upstream(socket: TcpStream, counter: &AtomicUsize) {
+    send_indefinitely(socket, |n| {
+        counter.fetch_add(n, Ordering::Relaxed);
+    });
 }
 
-fn handle_downstream(mut socket: TcpStream, counter: &AtomicUsize) {
-    impl_recv!(socket: n => { counter.fetch_add(n, Ordering::Relaxed); });
+fn handle_downstream(socket: TcpStream, counter: &AtomicUsize) {
+    receive_indefinitely(socket, |n| {
+        counter.fetch_add(n, Ordering::Relaxed);
+    });
 }

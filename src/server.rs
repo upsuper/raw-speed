@@ -1,6 +1,6 @@
-use crate::protocol::{self, Mode};
+use crate::protocol::{self, receive_indefinitely, send_indefinitely, Mode};
 use crate::utils;
-use std::io::{ErrorKind, Read, Write};
+use std::io::Read;
 use std::net::{TcpListener, TcpStream};
 
 pub fn run(addr: &str, port: u16) {
@@ -63,11 +63,11 @@ fn handle_connection(mut socket: TcpStream) {
 }
 
 /// Receive upstream data from the client.
-fn handle_upstream(mut socket: TcpStream) {
-    impl_recv!(socket: _n => {});
+fn handle_upstream(socket: TcpStream) {
+    receive_indefinitely(socket, |_| {});
 }
 
 /// Send downstream data to the client.
-fn handle_downstream(mut socket: TcpStream) {
-    impl_send!(socket: _n => {});
+fn handle_downstream(socket: TcpStream) {
+    send_indefinitely(socket, |_| {});
 }

@@ -1,4 +1,6 @@
 use bitflags::bitflags;
+use std::io::{ErrorKind, Read, Write};
+use std::net::TcpStream;
 use std::str::FromStr;
 
 pub const MAGIC_NUMBER: &[u8; 4] = b"SPED";
@@ -28,40 +30,34 @@ impl FromStr for Mode {
     }
 }
 
-macro_rules! buf_size {
-    () => {
-        1024 * 1024
-    };
-}
-macro_rules! impl_send {
-    ($socket:ident : $n:ident => $handler:block) => {
-        let buf = [0u8; buf_size!()];
-        loop {
-            match $socket.write(&buf) {
-                Ok(0) => break,
-                Ok($n) => $handler,
-                Err(e) => {
-                    if e.kind() != ErrorKind::Interrupted {
-                        panic!("Failed to send data: {:?}", e);
-                    }
+const BUF_SIZE: usize = 1024 * 1024;
+
+pub fn send_indefinitely(mut socket: TcpStream, progress: impl Fn(usize)) {
+    let buf = [0u8; BUF_SIZE];
+    loop {
+        match socket.write(&buf) {
+            Ok(0) => break,
+            Ok(n) => progress(n),
+            Err(e) => {
+                if e.kind() != ErrorKind::Interrupted {
+                    panic!("Failed to send data: {:?}", e);
                 }
             }
         }
-    };
+    }
 }
-macro_rules! impl_recv {
-    ($socket:ident : $n:ident => $handler:block) => {
-        let mut buf = [0u8; buf_size!()];
-        loop {
-            match $socket.read(&mut buf) {
-                Ok(0) => break,
-                Ok($n) => $handler,
-                Err(e) => {
-                    if e.kind() != ErrorKind::Interrupted {
-                        panic!("Failed to receive data: {:?}", e);
-                    }
+
+pub fn receive_indefinitely(mut socket: TcpStream, progress: impl Fn(usize)) {
+    let mut buf = [0u8; BUF_SIZE];
+    loop {
+        match socket.read(&mut buf) {
+            Ok(0) => break,
+            Ok(n) => progress(n),
+            Err(e) => {
+                if e.kind() != ErrorKind::Interrupted {
+                    panic!("Failed to receive data: {:?}", e);
                 }
             }
         }
-    };
+    }
 }
