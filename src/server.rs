@@ -14,15 +14,16 @@ pub fn run(addr: &str, port: u16) {
     loop {
         match listener.accept() {
             Err(e) => println!("Couldn't get client: {:?}", e),
-            Ok((socket, addr)) => utils::create_thread(format!("conn-{}", addr), move || {
-                handle_connection(socket)
-            }).unwrap_or_else(|e| {
-                println!(
-                    "Failed to handle connection \
+            Ok((socket, addr)) => {
+                utils::create_thread(format!("conn-{}", addr), move || handle_connection(socket))
+                    .unwrap_or_else(|e| {
+                        println!(
+                            "Failed to handle connection \
                      from {}: {:?}",
-                    addr, e
-                );
-            }),
+                            addr, e
+                        );
+                    })
+            }
         }
     }
 }

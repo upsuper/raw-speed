@@ -36,7 +36,8 @@ fn main() {
             (@arg server: +required "Server address")
             (@arg port: "Server port, 7333 by default")
         )
-    ).get_matches();
+    )
+    .get_matches();
 
     if let Some(server) = matches.subcommand_matches("server") {
         let addr = server.value_of("address").unwrap_or(DEFAULT_ADDR);

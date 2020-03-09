@@ -39,9 +39,11 @@ macro_rules! impl_send {
             match $socket.write(&buf) {
                 Ok(0) => break,
                 Ok($n) => $handler,
-                Err(e) => if e.kind() != ErrorKind::Interrupted {
-                    panic!("Failed to send data: {:?}", e);
-                },
+                Err(e) => {
+                    if e.kind() != ErrorKind::Interrupted {
+                        panic!("Failed to send data: {:?}", e);
+                    }
+                }
             }
         }
     };
@@ -53,9 +55,11 @@ macro_rules! impl_recv {
             match $socket.read(&mut buf) {
                 Ok(0) => break,
                 Ok($n) => $handler,
-                Err(e) => if e.kind() != ErrorKind::Interrupted {
-                    panic!("Failed to receive data: {:?}", e);
-                },
+                Err(e) => {
+                    if e.kind() != ErrorKind::Interrupted {
+                        panic!("Failed to receive data: {:?}", e);
+                    }
+                }
             }
         }
     };
