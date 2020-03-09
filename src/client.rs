@@ -1,5 +1,4 @@
 use crate::protocol::{self, receive_indefinitely, send_indefinitely, Mode};
-#[cfg(not(target_env = "musl"))]
 use console::Term;
 use crossbeam;
 use humansize::file_size_opts::BINARY;
@@ -61,7 +60,6 @@ pub fn run(addr: &str, port: u16, mode: Mode) {
 
     conn.flush().expect("Failed to flush data");
     let start_time = Instant::now();
-    #[cfg(not(target_env = "musl"))]
     let term = Term::stdout();
 
     let up_bytes = AtomicUsize::new(0);
@@ -135,7 +133,7 @@ pub fn run(addr: &str, port: u16, mode: Mode) {
                 );
             }
 
-            let mut _lines = 0;
+            let mut lines = 0;
             if mode.contains(Mode::UP) {
                 print_avgs(
                     "Up",
@@ -144,7 +142,7 @@ pub fn run(addr: &str, port: u16, mode: Mode) {
                     &mut up_samples_5s,
                     &mut up_samples_1m,
                 );
-                _lines += 1;
+                lines += 1;
             }
             if mode.contains(Mode::DOWN) {
                 print_avgs(
@@ -154,12 +152,11 @@ pub fn run(addr: &str, port: u16, mode: Mode) {
                     &mut down_samples_5s,
                     &mut down_samples_1m,
                 );
-                _lines += 1;
+                lines += 1;
             }
 
             thread::sleep(sample_interval);
-            #[cfg(not(target_env = "musl"))]
-            term.clear_last_lines(_lines).unwrap();
+            term.clear_last_lines(lines).unwrap();
         }
     })
     .expect("thread panicked");
