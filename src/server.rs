@@ -1,8 +1,8 @@
 use std::io::{ErrorKind, Read, Write};
 use std::net::{TcpListener, TcpStream};
 
-use protocol::{self, Mode};
-use utils;
+use crate::protocol::{self, Mode};
+use crate::utils;
 
 pub fn run(addr: &str, port: u16) {
     let listener = TcpListener::bind((addr, port)).expect("Failed to start listening");

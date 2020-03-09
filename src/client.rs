@@ -12,7 +12,7 @@ use crossbeam;
 use humansize::file_size_opts::BINARY;
 use humansize::FileSize;
 
-use protocol::{self, Mode};
+use crate::protocol::{self, Mode};
 
 #[derive(Clone, Copy)]
 struct Sample {
