@@ -1,8 +1,10 @@
 [package]
 name = "raw-speed"
 version = "0.1.0"
+description = "Tool for measuring the network speed between two devices"
 authors = ["Xidorn Quan <me@upsuper.org>"]
 edition = "2018"
+license = "GPL-3.0-or-later"
 
 [dependencies]
 bitflags = "1.2.1"
