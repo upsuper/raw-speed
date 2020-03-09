@@ -9,8 +9,8 @@ use std::time::{Duration, Instant};
 #[cfg(not(target_env = "musl"))]
 use console::Term;
 use crossbeam;
-use humansize::FileSize;
 use humansize::file_size_opts::BINARY;
+use humansize::FileSize;
 
 use protocol::{self, Mode};
 
@@ -79,11 +79,11 @@ pub fn run(addr: &str, port: u16, mode: Mode) {
             } else {
                 conn.take().unwrap()
             };
-            scope.spawn(|| handle_upstream(conn, &up_bytes));
+            scope.spawn(|_| handle_upstream(conn, &up_bytes));
         }
         if mode.contains(Mode::DOWN) {
             let conn = conn.take().unwrap();
-            scope.spawn(|| handle_downstream(conn, &down_bytes));
+            scope.spawn(|_| handle_downstream(conn, &down_bytes));
         }
 
         let sample_interval = Duration::new(1, 0);
