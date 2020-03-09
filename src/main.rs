@@ -1,11 +1,4 @@
-#[macro_use]
-extern crate bitflags;
-#[macro_use]
-extern crate clap;
-#[cfg(not(target_env = "musl"))]
-extern crate console;
-extern crate crossbeam;
-extern crate humansize;
+use clap::clap_app;
 
 #[macro_use]
 mod protocol;

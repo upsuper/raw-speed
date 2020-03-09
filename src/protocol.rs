@@ -1,5 +1,7 @@
 use std::str::FromStr;
 
+use bitflags::bitflags;
+
 pub const MAGIC_NUMBER: &[u8; 4] = b"SPED";
 
 bitflags! {
