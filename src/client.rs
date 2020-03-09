@@ -163,7 +163,8 @@ pub fn run(addr: &str, port: u16, mode: Mode) {
             #[cfg(not(target_env = "musl"))]
             term.clear_last_lines(_lines).unwrap();
         }
-    });
+    })
+    .expect("thread panicked");
 }
 
 fn handle_upstream(mut socket: TcpStream, counter: &AtomicUsize) {
