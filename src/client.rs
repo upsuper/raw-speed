@@ -1,6 +1,5 @@
 use crate::protocol::{self, receive_indefinitely, send_indefinitely, Mode};
 use console::Term;
-use crossbeam;
 use humansize::file_size_opts::BINARY;
 use humansize::FileSize;
 use std::collections::VecDeque;
