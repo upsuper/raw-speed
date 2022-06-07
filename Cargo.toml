@@ -8,7 +8,7 @@ license = "GPL-3.0-or-later"
 
 [dependencies]
 bitflags = "1.2.1"
-console = "0.10.0"
-crossbeam = "0.7.3"
+console = "0.15.0"
+crossbeam = "0.8.1"
 humansize = "1.1.0"
 structopt = "0.3.11"
