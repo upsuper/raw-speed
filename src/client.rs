@@ -1,7 +1,6 @@
 use crate::protocol::{self, receive_indefinitely, send_indefinitely, Mode};
 use console::Term;
-use humansize::file_size_opts::BINARY;
-use humansize::FileSize;
+use humansize::{SizeFormatter, BINARY};
 use std::collections::VecDeque;
 use std::io::Write;
 use std::iter;
@@ -123,12 +122,12 @@ pub fn run(addr: &str, port: u16, mode: Mode) {
                 let avg_5s = compute_avg(samples_5s, new_sample, Duration::new(5, 0));
                 let avg_1m = compute_avg(samples_1m, new_sample, Duration::new(60, 0));
                 *sample = *new_sample;
+                let avg_1s = SizeFormatter::new(avg_1s, BINARY);
+                let avg_5s = SizeFormatter::new(avg_5s, BINARY);
+                let avg_1m = SizeFormatter::new(avg_1m, BINARY);
                 println!(
                     "{}: 1s avg: {}/s, 5s avg: {}/s, 1min avg: {}/s",
-                    dir,
-                    avg_1s.file_size(BINARY).unwrap(),
-                    avg_5s.file_size(BINARY).unwrap(),
-                    avg_1m.file_size(BINARY).unwrap(),
+                    dir, avg_1s, avg_5s, avg_1m,
                 );
             }
 

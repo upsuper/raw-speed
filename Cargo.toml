@@ -11,4 +11,4 @@ clap = { version = "4", features = ["derive"] }
 bitflags = "1.2.1"
 console = "0.15.0"
 crossbeam = "0.8.1"
-humansize = "1.1.0"
+humansize = "2"
