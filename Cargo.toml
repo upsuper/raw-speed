@@ -7,8 +7,8 @@ edition = "2018"
 license = "GPL-3.0-or-later"
 
 [dependencies]
+clap = { version = "4", features = ["derive"] }
 bitflags = "1.2.1"
 console = "0.15.0"
 crossbeam = "0.8.1"
 humansize = "1.1.0"
-structopt = "0.3.11"
