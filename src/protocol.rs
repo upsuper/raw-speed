@@ -6,6 +6,7 @@ use std::str::FromStr;
 pub const MAGIC_NUMBER: &[u8; 4] = b"SPED";
 
 bitflags! {
+    #[derive(PartialEq, Clone, Copy, Debug)]
     pub struct Mode: u8 {
         /// Testing upstream speed from client to server.
         const UP = 1 << 0;
